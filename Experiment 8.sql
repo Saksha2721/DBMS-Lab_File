@@ -1,0 +1,114 @@
+CREATE TABLE BankAccounts (
+    AccountID INT PRIMARY KEY,
+    AccountHolder VARCHAR(50),
+    Balance DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB;
+
+INSERT INTO BankAccounts VALUES
+(101, 'Aarav Sharma', 10000.00),
+(102, 'Ananya Verma', 8000.00),
+(103, 'Rohan Gupta', 5000.00);
+
+SELECT * FROM BankAccounts;
+
+START TRANSACTION;
+
+UPDATE BankAccounts
+SET Balance = Balance - 1000
+WHERE AccountID = 101;
+
+UPDATE BankAccounts
+SET Balance = Balance + 1000
+WHERE AccountID = 102;
+
+COMMIT;
+
+SELECT * FROM BankAccounts;
+
+START TRANSACTION;
+
+UPDATE BankAccounts
+SET Balance = Balance - 500
+WHERE AccountID = 101;
+
+SELECT * FROM BankAccounts
+WHERE AccountID = 101;
+
+ROLLBACK;
+
+SELECT * FROM BankAccounts
+WHERE AccountID = 101;
+
+START TRANSACTION;
+
+UPDATE BankAccounts
+SET Balance = Balance - 200
+WHERE AccountID = 101;
+
+SAVEPOINT sp1;
+
+UPDATE BankAccounts
+SET Balance = Balance + 200
+WHERE AccountID = 102;
+
+ROLLBACK TO SAVEPOINT sp1;
+
+COMMIT;
+
+SELECT * FROM BankAccounts;
+
+START TRANSACTION;
+
+UPDATE BankAccounts
+SET Balance = Balance - 1000
+WHERE AccountID = 101;
+
+ROLLBACK;
+
+SELECT * FROM BankAccounts;
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+START TRANSACTION;
+
+SELECT Balance
+FROM BankAccounts
+WHERE AccountID = 101;
+
+COMMIT;
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+START TRANSACTION;
+
+SELECT Balance
+FROM BankAccounts
+WHERE AccountID = 101;
+
+COMMIT;
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+START TRANSACTION;
+
+SELECT Balance
+FROM BankAccounts
+WHERE AccountID = 101;
+
+COMMIT;
+
+START TRANSACTION;
+
+UPDATE BankAccounts
+SET Balance = Balance + 500
+WHERE AccountID = 101;
+
+COMMIT;
+
+START TRANSACTION;
+
+SELECT Balance
+FROM BankAccounts
+WHERE AccountID = 101;
+
+COMMIT;
