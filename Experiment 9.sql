@@ -1,0 +1,65 @@
+CREATE TABLE RailwayBooking (
+    BookingID INT PRIMARY KEY,
+    PassengerName VARCHAR(50),
+    TrainNo INT,
+    Source VARCHAR(50),
+    Destination VARCHAR(50),
+    TravelDate DATE,
+    SeatNo INT,
+    Fare DECIMAL(8,2)
+);
+
+INSERT INTO RailwayBooking
+(BookingID, PassengerName, TrainNo, Source, Destination, TravelDate, SeatNo, Fare)
+SELECT
+    n,
+    CONCAT('Passenger', n),
+    100 + (n % 20),
+    CASE WHEN n % 2 = 0 THEN 'Lucknow' ELSE 'Kanpur' END,
+    CASE WHEN n % 2 = 0 THEN 'Delhi' ELSE 'Agra' END,
+    DATE_ADD('2026-01-01', INTERVAL (n % 365) DAY),
+    n % 100 + 1,
+    300.00 + (n % 100) * 5
+FROM (
+    SELECT a.n + b.n * 10 + c.n * 100 + d.n * 1000 + 1 AS n
+    FROM
+        (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+    CROSS JOIN
+        (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
+    CROSS JOIN
+        (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
+    CROSS JOIN
+        (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d
+) AS numbers
+WHERE n <= 5000;
+
+SELECT COUNT(*) AS TotalRecords
+FROM RailwayBooking;
+
+EXPLAIN
+SELECT *
+FROM RailwayBooking
+WHERE TrainNo = 105;
+
+EXPLAIN
+SELECT *
+FROM RailwayBooking
+WHERE Source = 'Lucknow'
+AND Destination = 'Delhi';
+
+CREATE INDEX idx_train
+ON RailwayBooking(TrainNo);
+
+CREATE INDEX idx_route
+ON RailwayBooking(Source, Destination);
+
+EXPLAIN
+SELECT *
+FROM RailwayBooking
+WHERE TrainNo = 105;
+
+EXPLAIN
+SELECT *
+FROM RailwayBooking
+WHERE Source = 'Lucknow'
+AND Destination = 'Delhi';
